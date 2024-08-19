@@ -1,26 +1,10 @@
-SELECT 
-    STND_ASTS_NAME_OF_BORROWER,
-    STND_ASTS_INFRA_NON_INFRA,
-    COALESCE(
-        CASE 
-            WHEN STND_ASTS_INFRA_NON_INFRA = 'INFRA' THEN STND_ASTS_INFRA_WITHIN2YRS 
-            ELSE STND_ASTS_NONINFRA_WITHIN1YR 
-        END, 
-        ''
-    ) AS STND_ASTS_WITHIN_1_OR_2_YRS,
-    COALESCE(
-        CASE 
-            WHEN STND_ASTS_INFRA_NON_INFRA = 'INFRA' THEN STND_ASTS_INFRA_ACCTS2YRS 
-            ELSE STND_ASTS_NONINFRA_ACCTS1YR 
-        END, 
-        ''
-    ) AS STND_ASTS_ACCTS_1_OR_2_YRS,
-    STND_ASSETS_SEQ AS ROWSEQ, 
-    STND_ASSETS_SEQ,
-    'false'
-FROM 
-    CRS_STND_ASSETS 
-WHERE 
-    REPORT_MASTER_LIST_ID_FK = :submissionId  
-ORDER BY 
-    STND_ASSETS_SEQ
+public List<List<String>> processResult(List<List<String>> result) {
+    for (List<String> row : result) {
+        for (int i = 0; i < row.size(); i++) {
+            if ("NULL".equals(row.get(i))) {
+                row.set(i, "");  // Replace "NULL" with an empty string
+            }
+        }
+    }
+    return result;
+}
