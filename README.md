@@ -1,9 +1,5 @@
 SELECT  
-    CONCAT(
-        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 7, 4), '/', 
-        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 4, 2), '/', 
-        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 1, 2)
-    ) AS datedto,
+    REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 1, 10), '-', '-'), '-19', '-2019') AS datedto,  
     ch.HEDGEINV_PAN,  
     ch.HEDGEINV_CUSTOMER,  
     ch.HEDGEINV_AMOUNT, 
