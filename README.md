@@ -1,11 +1,15 @@
-select  
-        replace(replace(substr(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019') datedo,  
-        ch.HEDGEINV_PAN,  
-        ch.HEDGEINV_CUSTOMER,  
-        ch.HEDGEINV_AMOUNT , 
-        ch.HEDGEINV_ID AS RWOSEQ, 
-        ch.HEDGEINV_ID, 
-        'false' 
-        from CRS_HEDGEINV ch  
-        where ch.REPORT_MASTER_LIST_ID_FK='6864028'
-        order by ch.HEDGEINV_ID
+SELECT  
+    CONCAT(
+        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 7, 4), '/', 
+        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 4, 2), '/', 
+        SUBSTR(REPLACE(REPLACE(SUBSTR(ch.HEDGEINV_INVDATE, 0, 10), '-', '/'), '/19', '/2019'), 1, 2)
+    ) AS datedto,
+    ch.HEDGEINV_PAN,  
+    ch.HEDGEINV_CUSTOMER,  
+    ch.HEDGEINV_AMOUNT, 
+    ch.HEDGEINV_ID AS RWOSEQ, 
+    ch.HEDGEINV_ID, 
+    'false' 
+FROM CRS_HEDGEINV ch  
+WHERE ch.REPORT_MASTER_LIST_ID_FK = '6864028'
+ORDER BY ch.HEDGEINV_ID;
