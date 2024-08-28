@@ -1,37 +1,24 @@
-import java.time.LocalDate;
-import java.time.Month;
+ADJMOC_DATE
+ADJMOC_ID
+ADJMOC_AMOUNT
+ADJMOC_ACTUAL_EXPENSE
+ADJMOC_LIKELY_EXPENSE
+ADJMOC_EST_EXPENSE
+ADJMOC_CGL
+ADJMOC_COMPDESC
+ADJMOC_REMARKS
+ADJMOC_HEAD
+ADJMOC_COMP
+ADJMOC_BRANCH
+ADJMOC_SUBHEAD
+REPORT_MASTER_LIST_ID_FK
+above are my CRS_ADJMOC table columns 
 
-public class FinancialYearAndQuarter {
-    public static void main(String[] args) {
-        // Get the current date
-        LocalDate currentDate = LocalDate.now();
-
-        // Determine the financial year
-        int year = currentDate.getYear();
-        Month month = currentDate.getMonth();
-
-        // Financial year typically starts in April and ends in March
-        int financialYear;
-        if (month.isBefore(Month.APRIL)) {
-            financialYear = year - 1;
-        } else {
-            financialYear = year;
-        }
-
-        // Determine the financial quarter
-        int quarter;
-        if (month.isBefore(Month.JULY)) {
-            quarter = 1;
-        } else if (month.isBefore(Month.OCTOBER)) {
-            quarter = 2;
-        } else if (month.isBefore(Month.JANUARY)) {
-            quarter = 3;
-        } else {
-            quarter = 4;
-        }
-
-        // Output the financial year and quarter
-        System.out.println("Financial Year: " + financialYear + "-" + (financialYear + 1));
-        System.out.println("Quarter: Q" + quarter);
-    }
-}
+AD_DATE
+AD_BALANCE
+AD_CGL
+AD_COMP
+AD_BRANCH
+this are my CRS_ADJDATA table columns 
+now i need join query where AD_CGL column data values to be set to ADJMOC_ACTUAL_EXPENSE column but with condition check the ADJMOC_CGL and AD_CGL columns values are equals then set the data and where condition is 
+ADJMOC_BRANCH
