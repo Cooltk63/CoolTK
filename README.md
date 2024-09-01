@@ -1,18 +1,21 @@
-SELECT 
-    a.ADJMOC_DATE,
-    a.ADJMOC_ID,
-    a.ADJMOC_AMOUNT,
-    d.AD_CGL AS ADJMOC_ACTUAL_EXPENSE, -- Assigning AD_CGL from CRS_ADJDATA to ADJMOC_ACTUAL_EXPENSE
-    a.ADJMOC_LIKELY_EXPENSE,
-    a.ADJMOC_EST_EXPENSE,
-    a.ADJMOC_CGL,
-    a.ADJMOC_COMPDESC,
-    a.ADJMOC_REMARKS,
-    a.ADJMOC_HEAD,
-    a.ADJMOC_COMP,
-    a.ADJMOC_BRANCH,
-    a.ADJMOC_SUBHEAD,
-    a.REPORT_MASTER_LIST_ID_FK
-FROM CRS_ADJMOC a
-JOIN CRS_ADJDATA d ON a.ADJMOC_CGL = d.AD_CGL -- Join condition on CGL columns
-WHERE a.ADJMOC_BRANCH = d.AD_BRANCH; -- Filtering by branch
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class MyDataService {
+
+    @Autowired
+    private MyDataRepository myDataRepository;
+
+    public void saveData(List<List<String>> dataList) {
+        for (List<String> data : dataList) {
+            // Assumes each list has exactly 8 elements
+            MyDataEntity entity = new MyDataEntity(
+                data.get(0), data.get(1), data.get(2), data.get(3),
+                data.get(4), data.get(5), data.get(6), data.get(7)
+            );
+            myDataRepository.save(entity);
+        }
+    }
+}
