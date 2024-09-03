@@ -103,7 +103,45 @@ public class CrsLease {
 
 }
 
+// This is my delete method 
 
+ @Transactional
+    @Override
+    public ResponseEntity deleteById(Map<String,Object> map){
+
+        //For getting additional Details other than User Details
+        Map<String, String> data = (Map<String, String>) map.get("data");
+        ResponseVO<Integer> responseVO = new ResponseVO<>();
+
+        int isDeleted = 0;
+
+        try {
+            int deleteId = Integer.parseInt(data.get("uniqueId"));
+
+            // Check before ID is Existed or Not
+            int exits = crsLeaseRepository.countByleaseId(deleteId);
+            log.info("Is ID Exits :" + exits);
+
+            if (exits > 0) {
+                //If ID exists deleting Data
+                isDeleted = crsLeaseRepository.deleteByleaseId(deleteId);
+                log.info("Result for isDeleted :" + isDeleted);
+            }
+
+
+            // Setting Up Success & Response Data
+            responseVO.setStatusCode(HttpStatus.OK.value());
+            responseVO.setMessage("Data Deleted successfully");
+            responseVO.setResult(isDeleted);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            log.info("exception Occurred");
+            responseVO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            responseVO.setMessage("Exception Occurred" + e.getMessage());
+        }
+        return new ResponseEntity<>(responseVO, HttpStatus.OK);
+    }
 
 
 This is the error we get
