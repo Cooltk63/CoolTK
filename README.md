@@ -156,4 +156,5 @@
 
         I am alredy using the for loop for iterating list but my code wont work or insert multiple list i am passing inside List of List only insert single lis.
 
-        after that if existingentity return null or empty that means no data present in db against my ven param then insert the data which i am getting inside the list or list. given me code with proper comments.
+        after that if existingentity return null or empty that means no data present in db against my ven param then insert the data which i am getting inside the list or list.
+        also make sure the response i required in my specified format. given me code with proper comments also.
