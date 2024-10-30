@@ -1,3 +1,21 @@
+This is the JSON data i have received :
+
+{
+    "user": {
+        "quarterEndDate": "30/06/2020",
+        "branch_code": "64654"
+
+    },
+    "data": {
+    
+        "value":["444.2564","88888.2546","21","21","true"],
+        "submissionId":"555451"
+    }
+}
+
+
+below is function for saving data to DB 
+ 
  // For Saving SBLC ::: HEDGE_INV
     public ResponseEntity saveSblc(Map<String, Object> map) {
 
@@ -107,3 +125,6 @@
         }
 
     }
+
+
+I am facing the issue that this is the single static row save functionality but whenever i trying to edit and save every time new row inserted in db insted of updating same row how can i solve this issue by using the quarterEndDate and branch_code to identiry the data  is alredy existed in db if present then update that row else insert the new row but make sure do not make any changes related to any keys which i am getting from json data and comment each and every line with proper explantion
