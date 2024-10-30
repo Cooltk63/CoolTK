@@ -1,314 +1,109 @@
-org.apache.logging.log4j:log4j-core:pom:2.23.1 failed to transfer from http://0.0.0.0/ during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of maven-default-http-blocker has elapsed or updates are forced. Original error: Could not transfer artifact org.apache.logging.log4j:log4j-core:pom:2.23.1 from/to maven-default-http-blocker (http://0.0.0.0/): Blocked mirror for repositories: [my-repo (http://10.191.167.23:443/repository/, default, releases+snapshots)]
+ // For Saving SBLC ::: HEDGE_INV
+    public ResponseEntity saveSblc(Map<String, Object> map) {
 
-Since Maven 3.8.1 http repositories are blocked.
+        //For getting additional Details other than User Details
+        Map<String, Object> data = (Map<String, Object>) map.get("data");
 
-Possible solutions:
-- Check that Maven settings.xml does not contain http repositories
-- Check that Maven pom files do not contain http repository http://10.191.167.23:443/repository/
-- Add a mirror(s) for http://10.191.167.23:443/repository/ that allows http url in the Maven settings.xml
-- Downgrade Maven to version 3.8.1 or earlier in settings
+        //For Logged User Data
+        Map<String, String> loginUserData = (Map<String, String>) map.get("user");
 
+        String submissionId = String.valueOf(data.get("submissionId"));
+        try {
 
+            //List of ROW Data
+            List<String> dataList = (List<String>) data.get("value");
 
-this is the error i am getting while reloading or updating dependency via my local server
-
-My settings.xml file as per below 
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <proxies>
-        <proxy>
-            <id>alias</id>
-            <active>true</active>
-            <protocol>https</protocol>
-            <host>swg.sbi.co.in</host>
-            <port>9090</port>
-            <username>V1012297</username>
-            <password>Tush##2485</password>
-            <nonProxyHosts>http://10.191.167.23:443/repository/</nonProxyHosts>
-<!--            <nonProxyHosts>https://repo.maven.apache.org/maven2</nonProxyHosts>-->
-        </proxy>
-    </proxies>
-</settings>
+            log.info("dataList Recieved :"+dataList);
 
 
-also my pom.xml file as per below 
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
-    </parent>
-    <repositories>
-        <repository>
-            <id>my-repo</id>
-            <name>My Repository</name>
-            <url>http://10.191.167.23:443/repository/</url>
-        </repository>
-    </repositories>
-    <groupId>com.crs</groupId>
-    <artifactId>reportSubmission</artifactId>
-    <version>0.0.2</version>
-    <packaging>war</packaging>
-    <name>reportSubmission</name>
-    <description>reportSubmission</description>
-    <properties>
-        <java.version>17</java.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency><!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>0.12.6</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>0.12.6</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>0.12.6</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.glassfish.main.common/glassfish-api -->
-        <dependency>
-            <groupId>org.glassfish.main.common</groupId>
-            <artifactId>glassfish-api</artifactId>
-            <version>8.0.0-JDK17-M6</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>23-ea+22</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20240303</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.23.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-            <version>1.78.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-configuration2</artifactId>
-            <version>2.8.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date parsedDate = dateFormat.parse(loginUserData.get("quarterEndDate"));
 
 
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.16.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-digester3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <!--<artifactId>commons-digester3</artifactId>
-            <version>3.2</version>-->
-            <artifactId>commons-digester</artifactId>
-            <version>2.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.6</version>
-        </dependency>
+            Date SBLCDate = dateFormat.parse(dataList.get(0));
+            CRS_HedgeInv entity = new CRS_HedgeInv();
 
 
+            // Assign form data to Bean for Save
+            entity.setHedgeinv_branch(loginUserData.get("branch_code"));
+            entity.setHedgeinv_date(parsedDate);
 
 
-        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>6.21.3</version>
-            <!--<version>7.0.0</version>-->
-        </dependency>
+            // "hedgeInvDate"
+            entity.setHedgeinv_invdate(SBLCDate); //0
 
-        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fonts -->
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-fonts</artifactId>
-            <version>6.21.3</version>
-        </dependency>
+            // "hedgePan"
+            entity.setHedgeinv_pan(dataList.get(1)); //1
 
-        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-functions -->
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-functions</artifactId>
-            <version>6.21.3</version>
-        </dependency>
+            // "hedgeCustomer"
+            entity.setHedgeinv_customer(dataList.get(2)); //2
 
-        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-metadata -->
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-metadata</artifactId>
-            <version>6.21.3</version>
-        </dependency>
+            // "hedgeAmount"
+            entity.setHedgeinv_amount(dataList.get(3)); //3
 
+            // "submissionId"
+            entity.setHedgeInvReporMastertFK(Integer.parseInt(submissionId));
 
-        <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.5.2.Final</version>
-        </dependency>
+            // Check if ROW -ID is empty or null for insert scenario
+            if (dataList.get(4).trim().isEmpty() || dataList.get(5) == null) {
+                log.info("Entity Data for Insert: " + entity);
 
+                CRS_HedgeInv crsHedgeInv = crsHedgeInvRepository.save(entity);
+                log.info("CRSHedgeInv saved to database" + crsHedgeInv.getHedgeinvId());
+                // Sending data to response MAP
+                Map<String, Object> resultDataMap = new HashMap<>();
+                resultDataMap.put("status", true);
+                resultDataMap.put("newRowNum", crsHedgeInv.getHedgeinvId());
+                resultDataMap.put("newId", crsHedgeInv.getHedgeinvId());
 
-        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.55</version>
-        </dependency>
+                ResponseVO<Map<String, Object>> responseVO = new ResponseVO();
+                responseVO.setStatusCode(HttpStatus.OK.value());
+                responseVO.setMessage("Data Inserted successfully");
+                responseVO.setResult(resultDataMap);
+//                responseVO.setResult(String.valueOf(savedEntity.getStndassetsseq()));
+                return new ResponseEntity<>(responseVO, HttpStatus.OK);
+            } else {
+                // ID is provided, check for existence and update
+                int id = Integer.parseInt(dataList.get(5));
+                log.info("Received ID for Update: " + id + " Is ID Existed :" + crsHedgeInvRepository.existsByhedgeinvId(id));
+                ResponseVO<Map<String, Object>> responseVO = new ResponseVO();
+                Map<String, Object> resultDataMap = new HashMap<>();
+                if (crsHedgeInvRepository.existsByhedgeinvId(id)) {
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+                    // Update existing row
+                    entity.setHedgeinvId(id);  // Set the ID for update
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>6.3.0</version>
-        </dependency>
+                    CRS_HedgeInv crsHedgeInv = crsHedgeInvRepository.save(entity);
+                    log.info("Data Updated successfully: " + crsHedgeInv);
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>6.3.0</version>
-        </dependency>
+                    resultDataMap.put("status", true);
+                    resultDataMap.put("newRowNum", entity.getHedgeinvId());
+                    resultDataMap.put("newId", entity.getHedgeinvId());
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>6.3.0</version>
-        </dependency>
+                    responseVO.setStatusCode(HttpStatus.OK.value());
+                    responseVO.setMessage("Data Updated successfully");
+                    responseVO.setResult(resultDataMap);
+                    return new ResponseEntity<>(responseVO, HttpStatus.OK);
+                } else {
+                    // ID not found, handle error
+                    log.info("ID " + id + " not found for update");
+                    responseVO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                    responseVO.setMessage("Invalid ID provided. Record not found.");
+                    resultDataMap.put("status", false);
+                    responseVO.setResult(resultDataMap);
+                    return new ResponseEntity<>(responseVO, HttpStatus.BAD_REQUEST);
+                }
+            }
 
-        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>2.0.29</version>
-        </dependency>
+        } catch (RuntimeException e) {
+            ResponseVO<String> responseVO = new ResponseVO();
+            log.info("Exception Occurred :" + e.getCause());
+            responseVO.setResult("false");
+            responseVO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            responseVO.setMessage("Exception Occurred: " + e.getMessage());
+            return new ResponseEntity<>(responseVO, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
-        <!-- https://mvnrepository.com/artifact/com.github.librepdf/openpdf -->
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
-            <version>2.0.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.ibm.icu/com.ibm.icu -->
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>com.ibm.icu</artifactId>
-            <version>3.8.1-20081006</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>75.1</version>
-        </dependency>
-
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.3.1</version>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
-
-
-I still dont understand what is issue of downloading or resolving dependency help me to get resolve this error.
+    }
