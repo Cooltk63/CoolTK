@@ -1,88 +1,172 @@
-// For Saving SBLC ::: HEDGE_INV
-public ResponseEntity saveSblc(Map<String, Object> map) {
+net.sf.jasperreports.engine.fill.JRExpressionEvalException: Error evaluating expression for source text: new com.ibm.icu.text.DecimalFormat("#,##,##0.00").format ( ($F{CRS_YAPL_ADDITION}))
 
-    // Extracting data map from input JSON
-    Map<String, Object> data = (Map<String, Object>) map.get("data");
+        at net.sf.jasperreports.engine.fill.JREvaluator.handleEvaluationException(JREvaluator.java:294) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-    // Extracting user details from input JSON
-    Map<String, String> loginUserData = (Map<String, String>) map.get("user");
+        at net.sf.jasperreports.engine.fill.JREvaluator.evaluate(JREvaluator.java:328) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-    // Parsing submissionId from data map
-    String submissionId = String.valueOf(data.get("submissionId"));
+        at net.sf.jasperreports.engine.fill.JRCalculator.evaluate(JRCalculator.java:673) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-    try {
-        // List of data values (assuming "value" array is always provided)
-        List<String> dataList = (List<String>) data.get("value");
+        at net.sf.jasperreports.engine.fill.JRCalculator.evaluate(JRCalculator.java:641) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        log.info("dataList Received: " + dataList);
+        at net.sf.jasperreports.engine.fill.JRFillElement.evaluateExpression(JRFillElement.java:1292) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        // Date format for parsing date values
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        at net.sf.jasperreports.engine.fill.JRFillTextField.evaluateText(JRFillTextField.java:567) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        // Parsing quarterEndDate from user data
-        Date parsedQuarterEndDate = dateFormat.parse(loginUserData.get("quarterEndDate"));
+        at net.sf.jasperreports.engine.fill.JRFillTextField.evaluate(JRFillTextField.java:554) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        // Setting entity data with parsed details
-        CRS_HedgeInv entity = new CRS_HedgeInv();
-        entity.setHedgeinv_branch(loginUserData.get("branch_code"));
-        entity.setHedgeinv_date(parsedQuarterEndDate);
+        at net.sf.jasperreports.engine.fill.JRFillElementContainer.evaluate(JRFillElementContainer.java:383) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        // Parsing additional date from data list (index 0)
-        Date SBLCDate = dateFormat.parse(dataList.get(0));
-        entity.setHedgeinv_invdate(SBLCDate); // hedgeInvDate
+        at net.sf.jasperreports.engine.fill.JRFillBand.evaluate(JRFillBand.java:548) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        entity.setHedgeinv_pan(dataList.get(1));      // hedgePan
-        entity.setHedgeinv_customer(dataList.get(2)); // hedgeCustomer
-        entity.setHedgeinv_amount(dataList.get(3));   // hedgeAmount
-        entity.setHedgeInvReporMastertFK(Integer.parseInt(submissionId)); // submissionId
+        at net.sf.jasperreports.engine.fill.JRVerticalFiller.fillColumnBand(JRVerticalFiller.java:2614) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        // Check if a row with the same quarterEndDate and branch_code already exists
-        Optional<CRS_HedgeInv> existingEntity = crsHedgeInvRepository
-                .findByHedgeinv_branchAndHedgeinv_date(loginUserData.get("branch_code"), parsedQuarterEndDate);
+        at net.sf.jasperreports.engine.fill.JRVerticalFiller.fillDetail(JRVerticalFiller.java:837) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-        if (existingEntity.isPresent()) {
-            // Row exists, so perform an update
-            entity.setHedgeinvId(existingEntity.get().getHedgeinvId()); // Set ID to update
-            CRS_HedgeInv updatedEntity = crsHedgeInvRepository.save(entity);
-            log.info("Data Updated successfully: " + updatedEntity);
+        at net.sf.jasperreports.engine.fill.JRVerticalFiller.fillReportStart(JRVerticalFiller.java:276) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-            // Prepare response with updated entity details
-            Map<String, Object> resultDataMap = new HashMap<>();
-            resultDataMap.put("status", true);
-            resultDataMap.put("newRowNum", updatedEntity.getHedgeinvId());
-            resultDataMap.put("newId", updatedEntity.getHedgeinvId());
+        at net.sf.jasperreports.engine.fill.JRVerticalFiller.fillReport(JRVerticalFiller.java:119) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-            ResponseVO<Map<String, Object>> responseVO = new ResponseVO<>();
-            responseVO.setStatusCode(HttpStatus.OK.value());
-            responseVO.setMessage("Data Updated successfully");
-            responseVO.setResult(resultDataMap);
-            return new ResponseEntity<>(responseVO, HttpStatus.OK);
-        } else {
-            // Row doesn't exist, so perform an insert
-            CRS_HedgeInv newEntity = crsHedgeInvRepository.save(entity);
-            log.info("CRSHedgeInv saved to database: " + newEntity.getHedgeinvId());
+        at net.sf.jasperreports.engine.fill.JRBaseFiller.fill(JRBaseFiller.java:631) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-            // Prepare response with new entity details
-            Map<String, Object> resultDataMap = new HashMap<>();
-            resultDataMap.put("status", true);
-            resultDataMap.put("newRowNum", newEntity.getHedgeinvId());
-            resultDataMap.put("newId", newEntity.getHedgeinvId());
+        at net.sf.jasperreports.engine.fill.BaseReportFiller.fill(BaseReportFiller.java:416) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-            ResponseVO<Map<String, Object>> responseVO = new ResponseVO<>();
-            responseVO.setStatusCode(HttpStatus.OK.value());
-            responseVO.setMessage("Data Inserted successfully");
-            responseVO.setResult(resultDataMap);
-            return new ResponseEntity<>(responseVO, HttpStatus.OK);
-        }
+        at net.sf.jasperreports.engine.fill.JRFiller.fill(JRFiller.java:120) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
 
-    } catch (ParseException e) {
-        throw new RuntimeException(e);
-    } catch (RuntimeException e) {
-        ResponseVO<String> responseVO = new ResponseVO<>();
-        log.info("Exception Occurred: " + e.getCause());
-        responseVO.setResult("false");
-        responseVO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        responseVO.setMessage("Exception Occurred: " + e.getMessage());
-        return new ResponseEntity<>(responseVO, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-}
+        at net.sf.jasperreports.engine.JasperFillManager.fill(JasperFillManager.java:319) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
+
+        at net.sf.jasperreports.engine.JasperFillManager.fillReport(JasperFillManager.java:850) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
+
+        at com.crs.commonService.CommonServiceImpl.previewReport(CommonServiceImpl.java:126) ~[classes/:0.0.2]
+
+        at com.crs.commonService.CommonServiceController.previewReport(CommonServiceController.java:51) ~[classes/:0.0.2]
+
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+
+        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[servlet-api.jar:6.0]
+
+        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+
+        at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[servlet-api.jar:6.0]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:196) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-websocket.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+ 
+at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:109) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.springframework.boot.web.servlet.support.ErrorPageFilter.doFilter(ErrorPageFilter.java:124) ~[spring-boot-3.3.0.jar:3.3.0]
+
+        at org.springframework.boot.web.servlet.support.ErrorPageFilter$1.doFilterInternal(ErrorPageFilter.java:99) ~[spring-boot-3.3.0.jar:3.3.0]
+
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.boot.web.servlet.support.ErrorPageFilter.doFilter(ErrorPageFilter.java:117) ~[spring-boot-3.3.0.jar:3.3.0]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:165) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:673) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[catalina.jar:10.1.23]
+
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[catalina.jar:10.1.23]
+
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-coyote.jar:10.1.23]
+
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-coyote.jar:10.1.23]
+
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-coyote.jar:10.1.23]
+
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1736) ~[tomcat-coyote.jar:10.1.23]
+
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-coyote.jar:10.1.23]
+
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-util.jar:10.1.23]
+
+        at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-util.jar:10.1.23]
+
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-util.jar:10.1.23]
+
+        at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+Caused by: java.lang.NoSuchMethodError: 'java.lang.String com.ibm.icu.text.DecimalFormat.format(java.math.BigDecimal)'
+
+        at MOC_1712815701636_104738.evaluate(MOC_1712815701636_104738:161) ~[na:na]
+
+        at net.sf.jasperreports.engine.fill.JREvaluator.evaluate(JREvaluator.java:313) ~[jasperreports-6.21.3.jar:6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf]
+
+        ... 77 common frames omitted
+
+ I am getting this error while generating pdf from java hwo did i resolve this issue.
+ 
+ 
+ 
