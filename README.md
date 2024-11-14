@@ -8,25 +8,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AdfsFilter adfsFilter;
+    private final WSFederationFilter wsFederationFilter;
 
-    public SecurityConfig(AdfsFilter adfsFilter) {
-        this.adfsFilter = adfsFilter;
+    public SecurityConfig(WSFederationFilter wsFederationFilter) {
+        this.wsFederationFilter = wsFederationFilter;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/public/**").permitAll() // Public paths
-                .antMatchers("/index.html").authenticated() // Protect index.html
-                .anyRequest().authenticated() // All other paths require authentication
+                .antMatchers("/public/**").permitAll() // Allow public access to specific paths
+                .antMatchers("/").authenticated() // Protect the root URL (landing page)
+                .anyRequest().authenticated()
             .and()
             .oauth2Login()
                 .defaultSuccessUrl("/home", true);
 
-        // Add the ADFS filter only for requests to "index.html"
-        http.addFilterBefore(adfsFilter, UsernamePasswordAuthenticationFilter.class)
-            .requestMatcher(request -> request.getRequestURI().endsWith("index.html"));
+        // Apply the filter only for requests to the root URL "/"
+        http.addFilterBefore(wsFederationFilter, UsernamePasswordAuthenticationFilter.class)
+            .requestMatcher(request -> request.getRequestURI().equals("/"));
     }
 }
