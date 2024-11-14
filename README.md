@@ -1,31 +1,7 @@
-l[14/11, 5:30 pm] Falguni Nakhwa - TCS: import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-
-@Component
-public class ApiCallFilter extends OncePerRequestFilter {
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        // You can add any logic here. For example, log request details.
-        String requestUri = request.getRequestURI();
-        System.out.println("API call to: " + requestUri);
-
-        // Continue the filter chain
-        filterChain.doFilter(request, response);
-    }
-}
-[14/11, 5:30 pm] Falguni Nakhwa - TCS: import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -42,7 +18,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()  // Allow all requests without security constraints
             )
-            .addFilterBefore(apiCallFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(apiCallFilter, UsernamePasswordAuthenticationFilter.class)
+            .requestMatcher(new AntPathRequestMatcher("/Test"));  // Apply filter only on /Test
 
         return http.build();
     }
